@@ -1,51 +1,54 @@
-import { Router } from 'express';
-import jetValidator from 'jet-validator';
+import { Router } from "express";
+import jetValidator from "jet-validator";
 
-import Paths from '../constants/Paths';
-import User from '@src/models/User';
-import UserRoutes from './UserRoutes';
-
+import Paths from "../constants/Paths";
+import User from "@src/models/User";
+import UserRoutes from "./UserRoutes";
+import YelpRoutes from "./YelpRoutes";
 
 // **** Variables **** //
 
 const apiRouter = Router(),
   validate = jetValidator();
 
+// ** Add YelpRouter ** //
 
-// ** Add UserRouter ** //
+const yelpRouter = Router();
 
-const userRouter = Router();
+yelpRouter.post(Paths.Yelp.Businesses.Get, YelpRoutes.getBusinesses);
 
-// Get all users
-userRouter.get(
-  Paths.Users.Get,
-  UserRoutes.getAll,
-);
+apiRouter.use(Paths.Yelp.Base, yelpRouter);
 
-// Add one user
-userRouter.post(
-  Paths.Users.Add,
-  validate(['user', User.isUser]),
-  UserRoutes.add,
-);
+// // ** Add UserRouter ** //
 
-// Update one user
-userRouter.put(
-  Paths.Users.Update,
-  validate(['user', User.isUser]),
-  UserRoutes.update,
-);
+// const userRouter = Router();
 
-// Delete one user
-userRouter.delete(
-  Paths.Users.Delete,
-  validate(['id', 'number', 'params']),
-  UserRoutes.delete,
-);
+// // Get all users
+// userRouter.get(Paths.Users.Get, UserRoutes.getAll);
 
-// Add UserRouter
-apiRouter.use(Paths.Users.Base, userRouter);
+// // Add one user
+// userRouter.post(
+//   Paths.Users.Add,
+//   validate(["user", User.isUser]),
+//   UserRoutes.add
+// );
 
+// // Update one user
+// userRouter.put(
+//   Paths.Users.Update,
+//   validate(["user", User.isUser]),
+//   UserRoutes.update
+// );
+
+// // Delete one user
+// userRouter.delete(
+//   Paths.Users.Delete,
+//   validate(["id", "number", "params"]),
+//   UserRoutes.delete
+// );
+
+// // Add UserRouter
+// apiRouter.use(Paths.Users.Base, userRouter);
 
 // **** Export default **** //
 

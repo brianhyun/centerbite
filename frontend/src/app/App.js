@@ -1,3 +1,4 @@
+import axios from "axios";
 import mapboxgl from "mapbox-gl";
 import { HiXMark } from "react-icons/hi2";
 import toast, { Toaster } from "react-hot-toast";
@@ -9,6 +10,11 @@ import "./App.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { calculateGeometricMedian } from "../utils/center";
+
+const initialGeoJsonValue = {
+  type: "FeatureCollection",
+  features: [],
+};
 
 const isoLayer = {
   id: "isoLayer",
@@ -26,12 +32,9 @@ function App() {
   const mapRef = useRef();
   const [searchValue, setSearchValue] = useState("");
 
-  const [geojson, setGeojson] = useState({
-    type: "FeatureCollection",
-    features: [],
-  });
   const [addresses, setAddresses] = useState([]);
   const [center, setCenter] = useState(undefined);
+  const [geoJson, setGeoJson] = useState(initialGeoJsonValue);
 
   const handleRetrieve = (res) => {
     const features = res.features[0];
@@ -54,6 +57,10 @@ function App() {
 
     // Update list
     setAddresses((prevValue) => [features, ...prevValue]);
+
+    // Remove center and isochrone
+    setCenter(undefined);
+    setGeoJson(initialGeoJsonValue);
   };
 
   const handleFindCenter = () => {
@@ -68,16 +75,34 @@ function App() {
       longitude: address.geometry.coordinates[0],
     }));
     const center = calculateGeometricMedian(coordinates);
+    const { latitude, longitude } = center;
     console.log(center);
 
     setCenter(center);
     mapRef.current.flyTo({
-      center: [center.longitude, center.latitude],
+      center: [longitude, latitude],
       zoom: 14,
     });
 
     // Find iso
     getIso(center);
+
+    // Find a set of restaurants
+    axios
+      .post("/api/yelp/businesses", {
+        latitude: latitude,
+        longitude: longitude,
+      })
+      .then(function ({
+        data: {
+          data: { businesses },
+        },
+      }) {
+        console.log(businesses);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   };
 
   // Create a function that sets up the Isochrone API query then makes an fetch call
@@ -94,16 +119,23 @@ function App() {
     );
 
     const data = await query.json();
-    setGeojson((prevValue) => ({
+    setGeoJson((prevValue) => ({
       ...prevValue,
       features: data.features,
     }));
   };
 
   const handleRemoveAddress = (mapbox_id) => {
-    setAddresses((prevValue) =>
-      prevValue.filter((address) => address.properties.mapbox_id !== mapbox_id)
-    );
+    setAddresses((prevValue) => {
+      const newSet = prevValue.filter(
+        (address) => address.properties.mapbox_id !== mapbox_id
+      );
+
+      // Remove center and isochrone
+      setCenter(undefined);
+      setGeoJson(initialGeoJsonValue);
+      return newSet;
+    });
   };
 
   return (
@@ -138,7 +170,7 @@ function App() {
                     latitude={center.latitude}
                     longitude={center.longitude}
                   />
-                  <Source id="iso" type="geojson" data={geojson}>
+                  <Source id="iso" type="geojson" data={geoJson}>
                     <Layer {...isoLayer} />
                   </Source>
                 </Fragment>
