@@ -4,8 +4,8 @@ import { HiXMark } from "react-icons/hi2";
 import { MdFoodBank } from "react-icons/md";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
-import { Fragment, useRef, useState } from "react";
 import { SearchBox } from "@mapbox/search-js-react";
+import { Fragment, useRef, useState, useEffect } from "react";
 import { Map, Layer, Marker, Source, MapProvider, Popup } from "react-map-gl";
 
 import "./App.css";
@@ -24,7 +24,7 @@ const isoLayer = {
   source: "iso",
   layout: {},
   paint: {
-    "fill-color": "#5a3fc0",
+    "fill-color": "#0080FF",
     "fill-opacity": 0.3,
   },
 };
@@ -166,6 +166,10 @@ function App() {
     });
   };
 
+  useEffect(() => {
+    console.log(selectedBusiness);
+  }, [selectedBusiness]);
+
   return (
     <Fragment>
       <Toaster />
@@ -214,24 +218,41 @@ function App() {
                 businesses.map((business, index) => (
                   <Marker
                     key={index}
-                    handleClick={() => {
+                    onClick={(event) => {
+                      console.log(event);
+
                       setShowPopup(true);
                       setSelectedBusiness(business);
                     }}
                     latitude={business.coordinates.latitude}
                     longitude={business.coordinates.longitude}
                   >
-                    <MdFoodBank size={24} />
+                    <MdFoodBank size={24} color="FF6A00" />
                   </Marker>
                 ))}
               {showPopup && selectedBusiness && (
                 <Popup
-                  latitude={40}
-                  longitude={-100}
                   anchor="bottom"
+                  className="p-3"
+                  closeOnClick={false}
                   onClose={() => setShowPopup(false)}
+                  latitude={selectedBusiness.coordinates.latitude}
+                  longitude={selectedBusiness.coordinates.longitude}
                 >
-                  You are here
+                  <div>
+                    <a
+                      target="_blank"
+                      rel="noreferrer"
+                      href={selectedBusiness.url}
+                    >
+                      <h3>{selectedBusiness.name}</h3>
+                    </a>
+                    {selectedBusiness.location.display_address.map(
+                      (address, index) => (
+                        <p key={index}>{address}</p>
+                      )
+                    )}
+                  </div>
                 </Popup>
               )}
 
@@ -318,6 +339,68 @@ function App() {
             </div>
           )}
         </section>
+
+        {Boolean(businesses.length) && (
+          <Fragment>
+            <hr className="my-6" />
+
+            <section>
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-sm font-medium">Businesses</h2>
+                  <p className="text-xs text-gray-500">
+                    Select a business to find it on the map.
+                  </p>
+                </div>
+              </div>
+              {businesses.length ? (
+                <Fragment>
+                  <ul className="space-y-2">
+                    {businesses.map((business, index) => (
+                      <li
+                        key={index}
+                        className="h-44 flex items-center rounded-md border border-gray-300 shadow-sm overflow-hidden"
+                      >
+                        <div className="border-r border-gray-100 w-64">
+                          <img
+                            alt={business.alias}
+                            src={business.image_url}
+                            className="object-cover h-44 w-64"
+                          />
+                        </div>
+                        <div className="p-4 text-sm">
+                          <h3 className="font-medium">
+                            {business.name}{" "}
+                            <span className="font-semibold">
+                              {business.price}
+                            </span>
+                          </h3>
+                          {/* Use rating stars and yelp logo for external redirect */}
+                          <p>
+                            {business.rating} stars, {business.review_count}{" "}
+                            reviews
+                          </p>
+                          <p>{business.location.address1}</p>
+                          <p>
+                            {business.location.city}, {business.location.state}{" "}
+                            {business.location.zip_code}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </Fragment>
+              ) : (
+                <div className="bg-gray-100 border border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center text-sm shadow-sm">
+                  <MdFoodBank className="text-gray-400" size={20} />
+                  <p className="text-gray-400 mt-2">
+                    No businesses found in the area
+                  </p>
+                </div>
+              )}
+            </section>
+          </Fragment>
+        )}
       </main>
       <footer className="bottom-0 w-full h-48">
         <div className="container max-w-xl mx-auto border-t border-gray-200 pt-4 px-1 text-sm text-gray-400">
