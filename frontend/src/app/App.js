@@ -154,7 +154,6 @@ function App() {
             <Map
               ref={mapRef}
               mapLib={mapboxgl}
-              attributionControl={false}
               initialViewState={{
                 longitude: -122.40899552306048,
                 latitude: 37.78731236940814,
