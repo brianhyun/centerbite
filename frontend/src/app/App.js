@@ -1,11 +1,12 @@
 import axios from "axios";
 import mapboxgl from "mapbox-gl";
 import { HiXMark } from "react-icons/hi2";
+import { MdFoodBank } from "react-icons/md";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { Fragment, useRef, useState } from "react";
 import { SearchBox } from "@mapbox/search-js-react";
-import { Map, Layer, Marker, Source, MapProvider } from "react-map-gl";
+import { Map, Layer, Marker, Source, MapProvider, Popup } from "react-map-gl";
 
 import "./App.css";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -33,9 +34,15 @@ function App() {
   const mapRef = useRef();
   const [searchValue, setSearchValue] = useState("");
 
+  // Addresses
   const [addresses, setAddresses] = useState([]);
   const [center, setCenter] = useState(undefined);
   const [geoJson, setGeoJson] = useState(initialGeoJsonValue);
+
+  // Businesses
+  const [businesses, setBusinesses] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedBusiness, setSelectedBusiness] = useState(undefined);
 
   const handleRetrieve = (res) => {
     const features = res.features[0];
@@ -60,6 +67,7 @@ function App() {
     setAddresses((prevValue) => [features, ...prevValue]);
 
     // Remove center and isochrone
+    setBusinesses([]);
     setCenter(undefined);
     setGeoJson(initialGeoJsonValue);
   };
@@ -103,6 +111,7 @@ function App() {
         },
       }) {
         console.log(businesses);
+        setBusinesses(businesses);
       })
       .catch(function (error) {
         console.error(error);
@@ -115,7 +124,7 @@ function App() {
     const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
     const { latitude, longitude } = center;
     const profile = "driving"; // Set the default routing profile
-    const minutes = 30; // Set the default duration
+    const minutes = 15; // Set the default duration
 
     const query = await fetch(
       `${urlBase}${profile}/${longitude},${latitude}?contours_minutes=${minutes}&polygons=true&access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`,
@@ -136,6 +145,7 @@ function App() {
       );
 
       // Remove center and isochrone
+      setBusinesses([]);
       setCenter(undefined);
       setGeoJson(initialGeoJsonValue);
 
@@ -200,6 +210,30 @@ function App() {
                     longitude={address.geometry.coordinates[0]}
                   />
                 ))}
+              {Boolean(businesses.length) &&
+                businesses.map((business, index) => (
+                  <Marker
+                    key={index}
+                    handleClick={() => {
+                      setShowPopup(true);
+                      setSelectedBusiness(business);
+                    }}
+                    latitude={business.coordinates.latitude}
+                    longitude={business.coordinates.longitude}
+                  >
+                    <MdFoodBank size={24} />
+                  </Marker>
+                ))}
+              {showPopup && selectedBusiness && (
+                <Popup
+                  latitude={40}
+                  longitude={-100}
+                  anchor="bottom"
+                  onClose={() => setShowPopup(false)}
+                >
+                  You are here
+                </Popup>
+              )}
 
               <form className="m-2 absolute top-0 right-0 focus:outline-none active:outline-none">
                 <SearchBox
@@ -228,16 +262,26 @@ function App() {
                 calculated.
               </p>
             </div>
-            {addresses.length > 1 && !center && (
-              <button
-                type="button"
-                onClick={handleFindCenter}
-                className="text-sm text-gray-50 bg-blue-600 px-3 py-2 rounded-md shadow-sm flex items-center"
-              >
-                <FaMapMarkerAlt className="text-gray-50 mr-2" size={16} />
-                Find middle
-              </button>
-            )}
+            {(() => {
+              const disabled = !(addresses.length > 1 && !center);
+
+              return (
+                <button
+                  type="button"
+                  disabled={disabled}
+                  onClick={handleFindCenter}
+                  className="text-sm text-gray-50 bg-blue-600 px-3 py-2 rounded-md shadow-sm flex items-center disabled:bg-gray-100 disabled:border disabled:border-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                >
+                  <FaMapMarkerAlt
+                    size={16}
+                    className={`mr-2 ${
+                      disabled ? "text-gray-400" : "text-gray-50"
+                    }`}
+                  />
+                  Find middle
+                </button>
+              );
+            })()}
           </div>
           {addresses.length ? (
             <Fragment>
