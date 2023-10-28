@@ -9,7 +9,6 @@ Meet in the Middle is a web application that helps users find restaurants around
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Keys](#api-keys)
-- [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
 
@@ -69,10 +68,6 @@ REACT_APP_MAPBOX_ACCESS_TOKEN=your_mapbox_api_key
 2. Update the `.env` files in the `env` directory of the `backend` directory with your API keys:
 
 YELP_API_KEY=your_yelp_api_key
-
-## Contributing
-
-Contributions are welcome! Please read our [Contribution Guidelines](CONTRIBUTING.md) before submitting pull requests.
 
 ## License
 
