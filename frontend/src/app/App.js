@@ -1,6 +1,7 @@
 import axios from "axios";
 import mapboxgl from "mapbox-gl";
 import { HiXMark } from "react-icons/hi2";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { Fragment, useRef, useState } from "react";
 import { SearchBox } from "@mapbox/search-js-react";
@@ -144,12 +145,12 @@ function App() {
       <main className="container max-w-xl mx-auto py-8">
         <section className="mb-4">
           <h1 className="font-medium text-lg">Meet in the middle</h1>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-500">
             Find the midpoint of a set of addresses and receive recommendations
             on restaurants in that area.
           </p>
         </section>
-        <section className="h-96 rounded-lg overflow-hidden border border-slate-200">
+        <section className="h-96 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
           <MapProvider>
             <Map
               ref={mapRef}
@@ -199,17 +200,35 @@ function App() {
           </MapProvider>
         </section>
 
-        {Boolean(addresses.length) && (
-          <Fragment>
-            <hr className="my-6" />
+        <hr className="my-6" />
 
-            <section className="mt-4">
-              <h2 className="text-sm font-medium">Selected addresses</h2>
-              <ul className="mt-3 space-y-2">
+        <section className="mt-4">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-medium">Addresses</h2>
+              <p className="text-xs text-gray-500">
+                At least two addresses must be provided for a center to be
+                calculated.
+              </p>
+            </div>
+            {addresses.length > 1 && (
+              <button
+                type="button"
+                onClick={handleFindCenter}
+                className="text-sm text-gray-50 bg-blue-600 px-3 py-2 rounded-md shadow-sm flex items-center"
+              >
+                <FaMapMarkerAlt className="text-gray-50 mr-2" size={16} />
+                Find middle
+              </button>
+            )}
+          </div>
+          {addresses.length ? (
+            <Fragment>
+              <ul className="space-y-2">
                 {addresses.map((address, index) => (
                   <li
                     key={index}
-                    className="group flex items-center justify-between bg-gray-100 py-2 px-3 rounded-md border border-gray-300 shadow-sm"
+                    className="flex items-center justify-between bg-gray-100 py-2 px-3 rounded-md border border-gray-300 shadow-sm"
                   >
                     <div>
                       <p className="text-sm">{address.properties.address}</p>
@@ -217,32 +236,33 @@ function App() {
                         {address.properties.place_formatted}
                       </p>
                     </div>
-                    <button
-                      className="p-2 rounded-full group-hover:bg-gray-200 cursor-pointer"
-                      onClick={() =>
-                        handleRemoveAddress(address.properties.mapbox_id)
-                      }
-                    >
-                      <HiXMark className="w-5 h-5  text-gray-400 group-hover:text-gray-500" />
-                    </button>
+                    <div className="group">
+                      <button
+                        className="p-2 rounded-full group-hover:bg-gray-200 cursor-pointer"
+                        onClick={() =>
+                          handleRemoveAddress(address.properties.mapbox_id)
+                        }
+                      >
+                        <HiXMark className="w-5 h-5  text-gray-400 group-hover:text-gray-500" />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
-              {addresses.length > 1 && (
-                <div className="text-center mt-4">
-                  <button
-                    type="button"
-                    onClick={handleFindCenter}
-                    className="text-sm text-gray-50 bg-blue-600 px-3 py-2 rounded-md shadow-sm"
-                  >
-                    Find midpoint
-                  </button>
-                </div>
-              )}
-            </section>
-          </Fragment>
-        )}
+            </Fragment>
+          ) : (
+            <div className="bg-gray-100 border border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center text-sm shadow-sm">
+              <FaMapMarkerAlt className="text-gray-400" size={20} />
+              <p className="text-gray-400 mt-2">Search for an address</p>
+            </div>
+          )}
+        </section>
       </main>
+      <footer className="bottom-0 w-full h-48">
+        <div className="container max-w-xl mx-auto border-t border-gray-200 pt-4 px-1 text-sm text-gray-400">
+          <p>Powered by Mapbox and Yelp API. Built with React and Express.</p>
+        </div>
+      </footer>
     </Fragment>
   );
 }
