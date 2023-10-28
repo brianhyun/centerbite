@@ -65,28 +65,31 @@ function App() {
   };
 
   const handleFindCenter = () => {
-    if (addresses.length < 2) {
+    if (center) {
+      toast.error("The middle was already found!");
+      return;
+    } else if (addresses.length < 2) {
       toast.error("At least two address must be provided!");
       return;
     }
 
-    // Find and set center
+    // Find median and set center
     const coordinates = addresses.map((address) => ({
       latitude: address.geometry.coordinates[1],
       longitude: address.geometry.coordinates[0],
     }));
-    const center = calculateGeometricMedian(coordinates);
-    const { latitude, longitude } = center;
-    console.log(center);
+    const median = calculateGeometricMedian(coordinates);
+    const { latitude, longitude } = median;
+    console.log(median);
 
-    setCenter(center);
+    setCenter(median);
     mapRef.current.flyTo({
       center: [longitude, latitude],
       zoom: 14,
     });
 
     // Find iso
-    getIso(center);
+    getIso(median);
 
     // Find a set of restaurants
     axios
@@ -135,6 +138,20 @@ function App() {
       // Remove center and isochrone
       setCenter(undefined);
       setGeoJson(initialGeoJsonValue);
+
+      // Fly to the last element of the address list
+      if (newSet.length) {
+        const lastAddress = newSet[newSet.length - 1];
+        console.log(lastAddress);
+        const {
+          geometry: { coordinates },
+        } = lastAddress;
+        mapRef.current.flyTo({
+          center: [coordinates[0], coordinates[1]],
+          zoom: 14,
+        });
+      }
+
       return newSet;
     });
   };
@@ -211,7 +228,7 @@ function App() {
                 calculated.
               </p>
             </div>
-            {addresses.length > 1 && (
+            {addresses.length > 1 && !center && (
               <button
                 type="button"
                 onClick={handleFindCenter}
