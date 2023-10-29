@@ -26,7 +26,7 @@ export default function RestaurantCard({ restaurant, handleSelectCard }) {
   }, [restaurant.image_url]);
 
   return (
-    <div className="w-full h-44 flex items-center mt-4 shadow-md rounded-md">
+    <div className="w-full h-44 flex items-center mt-4 rounded-md">
       <div className="rounded-l-lg h-44 w-44 overflow-hidden">
         {imageValid === null ? (
           <div className="h-full bg-gray-200 flex flex-col items-center justify-center space-y-2">

@@ -73,6 +73,8 @@ function App() {
     setRestaurants([]);
     setCenter(undefined);
     setGeoJson(initialGeoJsonValue);
+    setShowPopup(false);
+    setSelectedRestaurant(undefined);
   };
 
   const handleFindCenter = () => {
@@ -83,6 +85,9 @@ function App() {
       toast.error("At least two address must be provided!");
       return;
     }
+
+    setShowPopup(false);
+    setSelectedRestaurant(undefined);
 
     // Find median and set center
     const coordinates = addresses.map((address) => ({
@@ -150,7 +155,9 @@ function App() {
       // Remove center and isochrone
       setRestaurants([]);
       setCenter(undefined);
+      setShowPopup(false);
       setGeoJson(initialGeoJsonValue);
+      setSelectedRestaurant(undefined);
 
       // Fly to the last element of the address list
       if (newSet.length) {
@@ -363,7 +370,7 @@ function App() {
               />
               {restaurants.length ? (
                 <Fragment>
-                  <ul className="divide-y divide-gray-200">
+                  <ul>
                     {restaurants.map((restaurant, index) => (
                       <li key={index} className="my-4 first:my-0 last:mb-0">
                         <RestaurantCard

@@ -74,7 +74,9 @@ YELP_API_KEY=your_yelp_api_key
 ## Future Features
 
 - **User Interface**
+  - Have an option to disable animations.
   - Show _Open until X_ in restaurant card.
+  - Show only 5-8 restaurants and have a randomize button.
   - Long restaurant names make the cards look too cramped.
   - The _X icon_ that closes the restaurant popup needs padding.
   - Show toast and loading icon while restaurants and isochrone polygon are being retrieved.
@@ -83,6 +85,7 @@ YELP_API_KEY=your_yelp_api_key
 - **Enhanced Accessibility**
   - Modifications to ensure the UI is accessible to users with disabilities, such as implementing keyboard shortcuts, ARIA roles, or other accessibility features.n
 - **Customization**
+  - Create a profile and allows users to add their dietary preferences.
   - Allow adding additional addresses by clicking on the map.
   - Option to select the type of centering algorithm used, e.g., simple average, bounding box center, weighted center, or geometric median.
   - Option to select the types of businesses recommended, e.g., restaurats, shopping, or hair salons, in additive fashion and the number of businesses recommended.
@@ -93,6 +96,7 @@ YELP_API_KEY=your_yelp_api_key
 
 - Clearing map search box causes refresh.
 - Restaurants aren't return on first load of project.
+- On add address, popups still remain.
 
 ## License
 
