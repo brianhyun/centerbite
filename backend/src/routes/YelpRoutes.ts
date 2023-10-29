@@ -18,7 +18,7 @@ async function getBusinesses(
   try {
     const { data } = await axios({
       method: "GET",
-      url: `https://api.yelp.com/v3/businesses/search?term=restaurants&latitude=${latitude}&longitude=${longitude}&open_now=true&sort_by=best_match&limit=20`,
+      url: `https://api.yelp.com/v3/businesses/search?term=restaurants&latitude=${latitude}&longitude=${longitude}&sort_by=best_match&limit=30`,
       headers: {
         accept: "application/json",
         Authorization: `Bearer ${process.env.YELP_API_KEY}`,

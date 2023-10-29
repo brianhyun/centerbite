@@ -1,7 +1,6 @@
 import axios from "axios";
 import mapboxgl from "mapbox-gl";
 import { HiXMark } from "react-icons/hi2";
-import { MdFoodBank } from "react-icons/md";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { SearchBox } from "@mapbox/search-js-react";
@@ -12,6 +11,9 @@ import "./App.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { calculateGeometricMedian } from "../utils/center";
+import StarRating from "../components/star-rating";
+import Badge from "../components/badge";
+import FoodIcon from "../components/food-icon";
 
 const initialGeoJsonValue = {
   type: "FeatureCollection",
@@ -227,7 +229,7 @@ function App() {
                     latitude={business.coordinates.latitude}
                     longitude={business.coordinates.longitude}
                   >
-                    <MdFoodBank size={24} color="FF6A00" />
+                    <FoodIcon size={30} />
                   </Marker>
                 ))}
               {showPopup && selectedBusiness && (
@@ -355,36 +357,89 @@ function App() {
               </div>
               {businesses.length ? (
                 <Fragment>
-                  <ul className="space-y-2">
+                  <ul className="divide-y divide-gray-200">
                     {businesses.map((business, index) => (
-                      <li
-                        key={index}
-                        className="h-44 flex items-center rounded-md border border-gray-300 shadow-sm overflow-hidden"
-                      >
-                        <div className="border-r border-gray-100 w-64">
-                          <img
-                            alt={business.alias}
-                            src={business.image_url}
-                            className="object-cover h-44 w-64"
-                          />
-                        </div>
-                        <div className="p-4 text-sm">
-                          <h3 className="font-medium">
-                            {business.name}{" "}
-                            <span className="font-semibold">
-                              {business.price}
-                            </span>
-                          </h3>
-                          {/* Use rating stars and yelp logo for external redirect */}
-                          <p>
-                            {business.rating} stars, {business.review_count}{" "}
-                            reviews
-                          </p>
-                          <p>{business.location.address1}</p>
-                          <p>
-                            {business.location.city}, {business.location.state}{" "}
-                            {business.location.zip_code}
-                          </p>
+                      <li key={index} className="my-4 first:my-0 last:mb-0">
+                        <div className="w-full h-44 flex items-center mt-4">
+                          <div className="rounded-lg h-44 w-44 shadow-md overflow-hidden">
+                            <a
+                              target="_blank"
+                              rel="noreferrer"
+                              href={business.url}
+                              className="hover:cursor-pointer"
+                            >
+                              <img
+                                alt={business.alias}
+                                src={business.image_url}
+                                className="object-cover transition duration-300 ease-in-out hover:scale-125 h-44 w-44"
+                              />
+                            </a>
+                          </div>
+                          <div className="grow px-4 py-2 text-sm h-44 flex flex-col items-start justify-between">
+                            <div className="w-full">
+                              <div className="w-full flex items-center justify-between">
+                                <div className="space-y-1">
+                                  <a
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    href={business.url}
+                                  >
+                                    <h3 className="text-base font-medium">
+                                      {business.name}
+                                    </h3>
+                                  </a>
+                                  <div className="flex items-center">
+                                    <StarRating rating={business.rating} />
+                                    <p className="font-medium text-gray-800 ml-2">
+                                      {business.rating.toFixed(1)}
+                                    </p>
+                                    <p className="text-gray-500 ml-1">
+                                      ({business.review_count} reviews)
+                                    </p>
+                                  </div>
+                                </div>
+                                <a
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  href={business.url}
+                                >
+                                  <img
+                                    width="26px"
+                                    src={
+                                      process.env.PUBLIC_URL +
+                                      "/yelp/burst/yelp_burst.svg"
+                                    }
+                                    alt="Yelp logo"
+                                  />
+                                </a>
+                              </div>
+
+                              <p className="mt-2">
+                                {business.is_closed ? (
+                                  <span className="text-red-700 font-medium">
+                                    Closed
+                                  </span>
+                                ) : (
+                                  <span className="text-green-700 font-medium">
+                                    Open
+                                  </span>
+                                )}{" "}
+                                •{" "}
+                                <span className="text-gray-800">
+                                  {business.price}
+                                </span>{" "}
+                                •{" "}
+                                <span className="text-gray-800">
+                                  {business.location.city}
+                                </span>
+                              </p>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              {business.categories.map(({ title }, index) => (
+                                <Badge text={title} key={index} />
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </li>
                     ))}
@@ -392,7 +447,7 @@ function App() {
                 </Fragment>
               ) : (
                 <div className="bg-gray-100 border border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center text-sm shadow-sm">
-                  <MdFoodBank className="text-gray-400" size={20} />
+                  <FoodIcon size={30} />
                   <p className="text-gray-400 mt-2">
                     No businesses found in the area
                   </p>
