@@ -3,7 +3,7 @@ import StarRating from "./star-rating";
 
 export default function RestaurantCard({ restaurant, handleSelectCard }) {
   return (
-    <div className="w-full h-44 flex items-center mt-4 shadow-sm">
+    <div className="w-full h-44 flex items-center mt-4 shadow-md rounded-md">
       <div className="rounded-l-lg h-44 w-44 overflow-hidden">
         <a
           target="_blank"

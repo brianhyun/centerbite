@@ -127,7 +127,7 @@ function App() {
     const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
     const { latitude, longitude } = center;
     const profile = "driving"; // Set the default routing profile
-    const minutes = 15; // Set the default duration
+    const minutes = 35; // Set the default duration
 
     const query = await fetch(
       `${urlBase}${profile}/${longitude},${latitude}?contours_minutes=${minutes}&polygons=true&access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`,
@@ -204,7 +204,8 @@ function App() {
             <h1 className="font-medium text-lg">Meet in the middle</h1>
             <p className="text-xs text-gray-600">
               Find the midpoint of a set of addresses and receive
-              recommendations on restaurants in that area.
+              recommendations on restaurants in that area. The shaded, blue area
+              is the area reachable in 35 minutes of driving.
             </p>
           </div>
         </section>
@@ -308,8 +309,7 @@ function App() {
         <section id="addresses" className="mt-4">
           <SectionHeading
             heading="Addresses"
-            description="At least two addresses must be provided for a center to be
-                calculated."
+            description="At least two addresses must be provided to calculate a center."
             action={(() => {
               const disabled = !(addresses.length > 1 && !center);
 
@@ -359,7 +359,7 @@ function App() {
             <section id="restaurants">
               <SectionHeading
                 heading="Restaurants"
-                description="Select a restaurant to find it on the map."
+                description="The top 30 restaurants around the center will be recommended."
               />
               {restaurants.length ? (
                 <Fragment>

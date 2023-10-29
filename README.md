@@ -9,6 +9,8 @@ Meet in the Middle is a web application that helps users find restaurants around
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Keys](#api-keys)
+- [Future Features](#future-features)
+- [Existing Bugs](#existing-bugs)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
 
@@ -68,6 +70,23 @@ REACT_APP_MAPBOX_ACCESS_TOKEN=your_mapbox_api_key
 2. Update the `.env` files in the `env` directory of the `backend` directory with your API keys:
 
 YELP_API_KEY=your_yelp_api_key
+
+## Future Features
+
+- **User Interface**
+  - Show _Open until X_ in restaurant card.
+  - Long restaurant names make the cards look too cramped.
+  - The _X icon_ that closes the restaurant popup needs padding.
+  - Show toast and loading icon while restaurants and isochrone polygon are being retrieved.
+  - Change the overall layout to a two-column structure with the map view in one column and the restaurant list in the other. This removes the need for the _Show on map_ button, which disorients the user if a restaurant from the bottom of the list is selected.
+  - Adapt the UI to be responsive, ensuring seamless user experience across various devices and screen sizes, including desktops, tablets, and smartphones. Focus on smaller screen sizes.
+- **Enhanced Accessibility**
+  - Modifications to ensure the UI is accessible to users with disabilities, such as implementing keyboard shortcuts, ARIA roles, or other accessibility features.
+- **Customization**
+  - Option to select the type of centering algorithm used, e.g., simple average, bounding box center, weighted center, or geometric median.
+  - Option to select the types of businesses recommended, e.g., restaurants, shopping, or hair salons, in additive fashion.
+  - Option to enter the distance from the center to filter search results.
+  - Instead of the food icon, have a number icon for easier searchability.
 
 ## License
 
