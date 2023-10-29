@@ -83,6 +83,7 @@ YELP_API_KEY=your_yelp_api_key
 - **Enhanced Accessibility**
   - Modifications to ensure the UI is accessible to users with disabilities, such as implementing keyboard shortcuts, ARIA roles, or other accessibility features.n
 - **Customization**
+  - Allow adding additional addresses by clicking on the map.
   - Option to select the type of centering algorithm used, e.g., simple average, bounding box center, weighted center, or geometric median.
   - Option to select the types of businesses recommended, e.g., restaurats, shopping, or hair salons, in additive fashion and the number of businesses recommended.
   - Option to enter the distance from the center to filter search results.
