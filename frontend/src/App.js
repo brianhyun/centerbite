@@ -1,19 +1,20 @@
 import axios from "axios";
 import mapboxgl from "mapbox-gl";
-import { HiXMark } from "react-icons/hi2";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
+import { Fragment, useRef, useState } from "react";
 import { SearchBox } from "@mapbox/search-js-react";
-import { Fragment, useRef, useState, useEffect } from "react";
+import AddressCard from "./components/address-card";
 import { Map, Layer, Marker, Source, MapProvider, Popup } from "react-map-gl";
 
-import "./App.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import { calculateGeometricMedian } from "../utils/center";
-import StarRating from "../components/star-rating";
-import Badge from "../components/badge";
-import FoodIcon from "../components/food-icon";
+import FoodIcon from "./components/food-icon";
+import RestaurantCard from "./components/restaurant-card";
+import SectionHeading from "./components/section-heading";
+import NoDataContainer from "./components/no-data-container";
+
+import { calculateGeometricMedian } from "./utils/center";
 
 const initialGeoJsonValue = {
   type: "FeatureCollection",
@@ -155,6 +156,7 @@ function App() {
       if (newSet.length) {
         const lastAddress = newSet[newSet.length - 1];
         console.log(lastAddress);
+
         const {
           geometry: { coordinates },
         } = lastAddress;
@@ -168,22 +170,49 @@ function App() {
     });
   };
 
-  useEffect(() => {
-    console.log(selectedRestaurant);
-  }, [selectedRestaurant]);
+  const handleSelectCard = (restaurant) => {
+    console.log(restaurant);
+
+    // Set selected restaurant
+    setShowPopup(true);
+    setSelectedRestaurant(restaurant);
+
+    // Fly to selected restaurant
+    const { coordinates } = restaurant;
+    mapRef.current.flyTo({
+      center: [coordinates.longitude, coordinates.latitude],
+      zoom: 14,
+    });
+
+    const element = document.getElementById("heading");
+
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <Fragment>
       <Toaster />
-      <main className="container max-w-xl mx-auto py-8">
-        <section className="mb-4">
-          <h1 className="font-medium text-lg">Meet in the middle</h1>
-          <p className="text-sm text-gray-500">
-            Find the midpoint of a set of addresses and receive recommendations
-            on restaurants in that area.
-          </p>
+
+      <main className="container max-w-xl mx-auto py-8 px-4">
+        <section id="heading" className="mb-4 flex items-center space-x-3">
+          <div className="bg-gray-50 p-2 border border-gray-200 rounded-xl shadow-sm">
+            <FoodIcon size={60} />
+          </div>
+          <div>
+            <h1 className="font-medium text-lg">Meet in the middle</h1>
+            <p className="text-xs text-gray-600">
+              Find the midpoint of a set of addresses and receive
+              recommendations on restaurants in that area.
+            </p>
+          </div>
         </section>
-        <section className="h-96 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+
+        <section
+          id="map-section"
+          className="h-96 rounded-lg overflow-hidden border border-slate-200 shadow-sm"
+        >
           <MapProvider>
             <Map
               ref={mapRef}
@@ -276,16 +305,12 @@ function App() {
 
         <hr className="my-6" />
 
-        <section className="mt-4">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-sm font-medium">Addresses</h2>
-              <p className="text-xs text-gray-500">
-                At least two addresses must be provided for a center to be
-                calculated.
-              </p>
-            </div>
-            {(() => {
+        <section id="addresses" className="mt-4">
+          <SectionHeading
+            heading="Addresses"
+            description="At least two addresses must be provided for a center to be
+                calculated."
+            action={(() => {
               const disabled = !(addresses.length > 1 && !center);
 
               return (
@@ -305,40 +330,25 @@ function App() {
                 </button>
               );
             })()}
-          </div>
+          />
           {addresses.length ? (
             <Fragment>
               <ul className="space-y-2">
                 {addresses.map((address, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center justify-between bg-gray-100 py-2 px-3 rounded-md border border-gray-300 shadow-sm"
-                  >
-                    <div>
-                      <p className="text-sm">{address.properties.address}</p>
-                      <p className="text-sm">
-                        {address.properties.place_formatted}
-                      </p>
-                    </div>
-                    <div className="group">
-                      <button
-                        className="p-2 rounded-full group-hover:bg-gray-200 cursor-pointer"
-                        onClick={() =>
-                          handleRemoveAddress(address.properties.mapbox_id)
-                        }
-                      >
-                        <HiXMark className="w-5 h-5  text-gray-400 group-hover:text-gray-500" />
-                      </button>
-                    </div>
+                  <li key={index}>
+                    <AddressCard
+                      address={address}
+                      handleRemoveAddress={handleRemoveAddress}
+                    />
                   </li>
                 ))}
               </ul>
             </Fragment>
           ) : (
-            <div className="bg-gray-100 border border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center text-sm shadow-sm">
-              <FaMapMarkerAlt className="text-gray-400" size={20} />
-              <p className="text-gray-400 mt-2">Search for an address</p>
-            </div>
+            <NoDataContainer
+              Icon={<FaMapMarkerAlt className="text-gray-400" size={20} />}
+              description="Search for an address"
+            />
           )}
         </section>
 
@@ -346,118 +356,36 @@ function App() {
           <Fragment>
             <hr className="my-6" />
 
-            <section>
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <h2 className="text-sm font-medium">Restaurants</h2>
-                  <p className="text-xs text-gray-500">
-                    Select a restaurant to find it on the map.
-                  </p>
-                </div>
-              </div>
+            <section id="restaurants">
+              <SectionHeading
+                heading="Restaurants"
+                description="Select a restaurant to find it on the map."
+              />
               {restaurants.length ? (
                 <Fragment>
                   <ul className="divide-y divide-gray-200">
                     {restaurants.map((restaurant, index) => (
                       <li key={index} className="my-4 first:my-0 last:mb-0">
-                        <div className="w-full h-44 flex items-center mt-4">
-                          <div className="rounded-lg h-44 w-44 shadow-md overflow-hidden">
-                            <a
-                              target="_blank"
-                              rel="noreferrer"
-                              href={restaurant.url}
-                              className="hover:cursor-pointer"
-                            >
-                              <img
-                                alt={restaurant.alias}
-                                src={restaurant.image_url}
-                                className="object-cover transition duration-300 ease-in-out hover:scale-125 h-44 w-44"
-                              />
-                            </a>
-                          </div>
-                          <div className="grow px-4 py-2 text-sm h-44 flex flex-col items-start justify-between">
-                            <div className="w-full">
-                              <div className="w-full flex items-center justify-between">
-                                <div className="space-y-1">
-                                  <a
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    href={restaurant.url}
-                                  >
-                                    <h3 className="text-base font-medium">
-                                      {restaurant.name}
-                                    </h3>
-                                  </a>
-                                  <div className="flex items-center">
-                                    <StarRating rating={restaurant.rating} />
-                                    <p className="font-medium text-gray-800 ml-2">
-                                      {restaurant.rating.toFixed(1)}
-                                    </p>
-                                    <p className="text-gray-500 ml-1">
-                                      ({restaurant.review_count} reviews)
-                                    </p>
-                                  </div>
-                                </div>
-                                <a
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  href={restaurant.url}
-                                >
-                                  <img
-                                    width="26px"
-                                    src={
-                                      process.env.PUBLIC_URL +
-                                      "/yelp/burst/yelp_burst.svg"
-                                    }
-                                    alt="Yelp logo"
-                                  />
-                                </a>
-                              </div>
-
-                              <p className="mt-2">
-                                {restaurant.is_closed ? (
-                                  <span className="text-red-700 font-medium">
-                                    Closed
-                                  </span>
-                                ) : (
-                                  <span className="text-green-700 font-medium">
-                                    Open
-                                  </span>
-                                )}{" "}
-                                •{" "}
-                                <span className="text-gray-800">
-                                  {restaurant.price}
-                                </span>{" "}
-                                •{" "}
-                                <span className="text-gray-800">
-                                  {restaurant.location.city}
-                                </span>
-                              </p>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              {restaurant.categories.map(({ title }, index) => (
-                                <Badge text={title} key={index} />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
+                        <RestaurantCard
+                          restaurant={restaurant}
+                          handleSelectCard={handleSelectCard}
+                        />
                       </li>
                     ))}
                   </ul>
                 </Fragment>
               ) : (
-                <div className="bg-gray-100 border border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center text-sm shadow-sm">
-                  <FoodIcon size={24} color={false} />
-                  <p className="text-gray-400 mt-2">
-                    No restaurants found in the area
-                  </p>
-                </div>
+                <NoDataContainer
+                  Icon={<FoodIcon size={24} color={false} />}
+                  description="No restaurants found in the area"
+                />
               )}
             </section>
           </Fragment>
         )}
       </main>
-      <footer className="bottom-0 w-full h-48">
+
+      <footer className="bottom-0 w-full h-48 px-4">
         <div className="container max-w-xl mx-auto border-t border-gray-200 pt-4 px-1 text-sm text-gray-400">
           <p>Powered by Mapbox and Yelp API. Built with React and Express.</p>
         </div>
