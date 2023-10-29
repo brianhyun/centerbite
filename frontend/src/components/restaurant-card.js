@@ -1,22 +1,63 @@
+import { useState, useEffect } from "react";
+import { MdHideImage } from "react-icons/md";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 import Badge from "./badge";
 import StarRating from "./star-rating";
 
 export default function RestaurantCard({ restaurant, handleSelectCard }) {
+  const [imageValid, setImageValid] = useState(null);
+
+  useEffect(() => {
+    const checkImage = (url) => {
+      const img = new Image();
+      img.src = url;
+      console.log({ img });
+      img.onload = () => {
+        setImageValid(true);
+      };
+      img.onerror = (err_event) => {
+        console.log({ err_event });
+        setImageValid(false);
+      };
+    };
+
+    checkImage(restaurant.image_url);
+  }, [restaurant.image_url]);
+
   return (
     <div className="w-full h-44 flex items-center mt-4 shadow-md rounded-md">
       <div className="rounded-l-lg h-44 w-44 overflow-hidden">
-        <a
-          target="_blank"
-          rel="noreferrer"
-          href={restaurant.url}
-          className="hover:cursor-pointer"
-        >
-          <img
-            alt={restaurant.alias}
-            src={restaurant.image_url}
-            className="object-cover transition duration-300 ease-in-out hover:scale-125 h-44 w-44"
-          />
-        </a>
+        {imageValid === null ? (
+          <div className="h-full bg-gray-200 flex flex-col items-center justify-center space-y-2">
+            <AiOutlineLoading3Quarters
+              size={24}
+              color="#BBBBBB"
+              className="animate-spin"
+            />
+            <p className="text-sm text-gray-400 font-medium">Checking image</p>
+          </div>
+        ) : imageValid ? (
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href={restaurant.url}
+            className="hover:cursor-pointer"
+          >
+            <img
+              alt={restaurant.alias}
+              src={restaurant.image_url}
+              className="object-cover transition duration-300 ease-in-out hover:scale-125 h-44 w-44"
+            />
+          </a>
+        ) : (
+          <div className="h-full bg-gray-200 flex flex-col items-center justify-center space-y-2">
+            <MdHideImage size={24} color="#BBBBBB" />
+            <p className="text-sm text-gray-400 font-medium">
+              No image available
+            </p>
+          </div>
+        )}
       </div>
       <div className="grow px-3 py-2 text-sm h-44 flex flex-col items-start justify-between rounded-r-lg border-t border-r border-b border-gray-200">
         <div className="w-full">

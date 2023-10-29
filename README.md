@@ -88,6 +88,11 @@ YELP_API_KEY=your_yelp_api_key
   - Option to enter the distance from the center to filter search results.
   - Instead of the food icon, have a number icon for easier searchability.
 
+## Existing Bugs
+
+- Clearing map search box causes refresh.
+- Restaurants aren't return on first load of project.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE.md) - see the [LICENSE.md](LICENSE.md) file for details.
