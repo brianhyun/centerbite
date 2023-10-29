@@ -41,10 +41,10 @@ function App() {
   const [center, setCenter] = useState(undefined);
   const [geoJson, setGeoJson] = useState(initialGeoJsonValue);
 
-  // Businesses
-  const [businesses, setBusinesses] = useState([]);
+  // Restaurants
+  const [restaurants, setRestaurants] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState(undefined);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(undefined);
 
   const handleRetrieve = (res) => {
     const features = res.features[0];
@@ -69,7 +69,7 @@ function App() {
     setAddresses((prevValue) => [features, ...prevValue]);
 
     // Remove center and isochrone
-    setBusinesses([]);
+    setRestaurants([]);
     setCenter(undefined);
     setGeoJson(initialGeoJsonValue);
   };
@@ -109,11 +109,11 @@ function App() {
       })
       .then(function ({
         data: {
-          data: { businesses },
+          data: { businesses: restaurants },
         },
       }) {
-        console.log(businesses);
-        setBusinesses(businesses);
+        console.log(restaurants);
+        setRestaurants(restaurants);
       })
       .catch(function (error) {
         console.error(error);
@@ -147,7 +147,7 @@ function App() {
       );
 
       // Remove center and isochrone
-      setBusinesses([]);
+      setRestaurants([]);
       setCenter(undefined);
       setGeoJson(initialGeoJsonValue);
 
@@ -169,8 +169,8 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(selectedBusiness);
-  }, [selectedBusiness]);
+    console.log(selectedRestaurant);
+  }, [selectedRestaurant]);
 
   return (
     <Fragment>
@@ -216,40 +216,40 @@ function App() {
                     longitude={address.geometry.coordinates[0]}
                   />
                 ))}
-              {Boolean(businesses.length) &&
-                businesses.map((business, index) => (
+              {Boolean(restaurants.length) &&
+                restaurants.map((restaurant, index) => (
                   <Marker
                     key={index}
                     onClick={(event) => {
                       console.log(event);
 
                       setShowPopup(true);
-                      setSelectedBusiness(business);
+                      setSelectedRestaurant(restaurant);
                     }}
-                    latitude={business.coordinates.latitude}
-                    longitude={business.coordinates.longitude}
+                    latitude={restaurant.coordinates.latitude}
+                    longitude={restaurant.coordinates.longitude}
                   >
                     <FoodIcon size={30} />
                   </Marker>
                 ))}
-              {showPopup && selectedBusiness && (
+              {showPopup && selectedRestaurant && (
                 <Popup
                   anchor="bottom"
                   className="p-3"
                   closeOnClick={false}
                   onClose={() => setShowPopup(false)}
-                  latitude={selectedBusiness.coordinates.latitude}
-                  longitude={selectedBusiness.coordinates.longitude}
+                  latitude={selectedRestaurant.coordinates.latitude}
+                  longitude={selectedRestaurant.coordinates.longitude}
                 >
                   <div>
                     <a
                       target="_blank"
                       rel="noreferrer"
-                      href={selectedBusiness.url}
+                      href={selectedRestaurant.url}
                     >
-                      <h3>{selectedBusiness.name}</h3>
+                      <h3>{selectedRestaurant.name}</h3>
                     </a>
-                    {selectedBusiness.location.display_address.map(
+                    {selectedRestaurant.location.display_address.map(
                       (address, index) => (
                         <p key={index}>{address}</p>
                       )
@@ -342,35 +342,35 @@ function App() {
           )}
         </section>
 
-        {Boolean(businesses.length) && (
+        {Boolean(restaurants.length) && (
           <Fragment>
             <hr className="my-6" />
 
             <section>
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <h2 className="text-sm font-medium">Businesses</h2>
+                  <h2 className="text-sm font-medium">Restaurants</h2>
                   <p className="text-xs text-gray-500">
-                    Select a business to find it on the map.
+                    Select a restaurant to find it on the map.
                   </p>
                 </div>
               </div>
-              {businesses.length ? (
+              {restaurants.length ? (
                 <Fragment>
                   <ul className="divide-y divide-gray-200">
-                    {businesses.map((business, index) => (
+                    {restaurants.map((restaurant, index) => (
                       <li key={index} className="my-4 first:my-0 last:mb-0">
                         <div className="w-full h-44 flex items-center mt-4">
                           <div className="rounded-lg h-44 w-44 shadow-md overflow-hidden">
                             <a
                               target="_blank"
                               rel="noreferrer"
-                              href={business.url}
+                              href={restaurant.url}
                               className="hover:cursor-pointer"
                             >
                               <img
-                                alt={business.alias}
-                                src={business.image_url}
+                                alt={restaurant.alias}
+                                src={restaurant.image_url}
                                 className="object-cover transition duration-300 ease-in-out hover:scale-125 h-44 w-44"
                               />
                             </a>
@@ -382,26 +382,26 @@ function App() {
                                   <a
                                     target="_blank"
                                     rel="noreferrer"
-                                    href={business.url}
+                                    href={restaurant.url}
                                   >
                                     <h3 className="text-base font-medium">
-                                      {business.name}
+                                      {restaurant.name}
                                     </h3>
                                   </a>
                                   <div className="flex items-center">
-                                    <StarRating rating={business.rating} />
+                                    <StarRating rating={restaurant.rating} />
                                     <p className="font-medium text-gray-800 ml-2">
-                                      {business.rating.toFixed(1)}
+                                      {restaurant.rating.toFixed(1)}
                                     </p>
                                     <p className="text-gray-500 ml-1">
-                                      ({business.review_count} reviews)
+                                      ({restaurant.review_count} reviews)
                                     </p>
                                   </div>
                                 </div>
                                 <a
                                   target="_blank"
                                   rel="noreferrer"
-                                  href={business.url}
+                                  href={restaurant.url}
                                 >
                                   <img
                                     width="26px"
@@ -415,7 +415,7 @@ function App() {
                               </div>
 
                               <p className="mt-2">
-                                {business.is_closed ? (
+                                {restaurant.is_closed ? (
                                   <span className="text-red-700 font-medium">
                                     Closed
                                   </span>
@@ -426,16 +426,16 @@ function App() {
                                 )}{" "}
                                 •{" "}
                                 <span className="text-gray-800">
-                                  {business.price}
+                                  {restaurant.price}
                                 </span>{" "}
                                 •{" "}
                                 <span className="text-gray-800">
-                                  {business.location.city}
+                                  {restaurant.location.city}
                                 </span>
                               </p>
                             </div>
                             <div className="flex items-center space-x-1">
-                              {business.categories.map(({ title }, index) => (
+                              {restaurant.categories.map(({ title }, index) => (
                                 <Badge text={title} key={index} />
                               ))}
                             </div>
@@ -447,9 +447,9 @@ function App() {
                 </Fragment>
               ) : (
                 <div className="bg-gray-100 border border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center text-sm shadow-sm">
-                  <FoodIcon size={30} />
+                  <FoodIcon size={24} color={false} />
                   <p className="text-gray-400 mt-2">
-                    No businesses found in the area
+                    No restaurants found in the area
                   </p>
                 </div>
               )}
