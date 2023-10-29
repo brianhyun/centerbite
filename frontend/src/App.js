@@ -201,7 +201,7 @@ function App() {
             <FoodIcon size={60} />
           </div>
           <div>
-            <h1 className="font-medium text-lg">Meet in the middle</h1>
+            <h1 className="font-medium text-lg">CenterBite</h1>
             <p className="text-xs text-gray-600">
               Find the midpoint of a set of addresses and receive
               recommendations on restaurants in that area. The shaded, blue area

@@ -1,6 +1,6 @@
-# Meet in the Middle
+# CenterBite
 
-Meet in the Middle is a web application that helps users find restaurants around the geometric median of a set of addresses. It utilizes the Mapbox API for address search and marker placement on a map and the Yelp Fusion API for restaurant recommendations. The frontend is built with React, and the backend is implemented using Express.js.
+CenterBite is a web application that helps users find restaurants around the geometric median of a set of addresses. It utilizes the Mapbox API for address search and marker placement on a map and the Yelp Fusion API for restaurant recommendations. The frontend is built with React, and the backend is implemented using Express.js.
 
 ## Table of Contents
 
