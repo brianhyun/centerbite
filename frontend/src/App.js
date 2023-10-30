@@ -205,7 +205,7 @@ function App() {
       <main className="container max-w-xl mx-auto py-8 px-4">
         <section id="heading" className="mb-4 flex items-center space-x-3">
           <div className="bg-gray-50 p-2 border border-gray-200 rounded-xl shadow-sm">
-            <FoodIcon size={60} />
+            <FoodIcon size={68} />
           </div>
           <div>
             <h1 className="font-medium text-lg">CenterBite</h1>
