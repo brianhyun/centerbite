@@ -11,6 +11,7 @@ CenterBite is a web application that helps users find restaurants around the geo
 - [API Keys](#api-keys)
 - [Future Improvements and Development Plans](#future-improvements-and-development-plans)
 - [Existing Bugs](#existing-bugs)
+- [Project Credits and Development Timeline](#project-credits-and-development-timeline)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
 
@@ -109,11 +110,23 @@ YELP_API_KEY=your_yelp_api_key
 - Restaurants aren't return on first load of project.
 - On add address, popups still remain.
 
+## Project Credits and Development Timeline
+
+### Developer
+
+- **Brian Hyun** - Sole Developer
+
+### Project Timeline
+
+- **Project Start Date:** 10/24/23
+- **Project Completion Date:** 10/24/23
+- **Estimated Total Hours:** 12
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE.md) - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Acknowledgements
 
-- Thanks to Mapbox and Yelp for providing their APIs.
+- Thanks to Mapbox and Yelp for providing their APIs. All restaurant images are from the Yelp API.
 - Hat tip to the developers of React, Express.js, and other open-source libraries used in this project.
