@@ -2,7 +2,7 @@
 
 CenterBite is a web application that helps users find restaurants around the geometric median of a set of addresses. It utilizes the Mapbox API for address search and marker placement on a map and the Yelp Fusion API for restaurant recommendations. The frontend is built with React, and the backend is implemented using Express.js.
 
-[![Watch the Demo Video](https://img.youtube.com/vi/D9I9Ok4Qszw/0.jpg)](https://www.youtube.com/watch?v=D9I9Ok4Qszw)
+[![Watch the Demo Video](https://img.youtube.com/vi/D9I9Ok4Qszw/2.jpg)](https://www.youtube.com/watch?v=D9I9Ok4Qszw)
 
 ## Table of Contents
 
